@@ -1,5 +1,5 @@
 locals {
-  flow_name = "sym_iam_access"
+  flow_name = "iam_access"
 }
 
 # The Flow that grants users access to IAM targets.
@@ -11,7 +11,7 @@ resource "sym_flow" "this" {
 
   implementation = "${path.module}/impl.py"
 
-  environment_id = var.sym_environment_id
+  environment_id = var.sym_environment.id
 
   vars = var.flow_vars
 
@@ -30,12 +30,12 @@ resource "sym_flow" "this" {
   }
 }
 
-# The Strategy your Flow uses to manage target IAM groups.
+# The Strategy your Flow uses to manage target AWS IAM groups.
 resource "sym_strategy" "this" {
   type = "aws_iam"
 
   name           = local.flow_name
-  integration_id = var.iam_context_id
+  integration_id = sym_integration.iam_context.id
   targets        = [for target in var.targets : sym_target.targets[target["group_name"]].id]
 }
 
@@ -52,3 +52,22 @@ resource "sym_target" "targets" {
     iam_group = each.key
   }
 }
+
+# The AWS IAM Resources that enable Sym to manage IAM Groups
+module "iam_connector" {
+  source  = "terraform.symops.com/symopsio/iam-connector/sym"
+  version = ">= 1.2.0"
+
+  environment       = local.flow_name
+  runtime_role_arns = [var.runtime_settings.role_arn]
+}
+
+# The Integration your Strategy uses to manage IAM Groups
+resource "sym_integration" "iam_context" {
+  type = "permission_context"
+  name = local.flow_name
+
+  external_id = module.iam_connector.settings.account_id
+  settings    = module.iam_connector.settings
+}
+

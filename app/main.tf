@@ -6,7 +6,7 @@ provider "sym" {
   org = var.sym_org_slug
 }
 
-# Creates a Sym Runtime that can execute your Flows.
+# A Sym Runtime that executes your Flows.
 module "sym_runtime" {
   source = "../modules/sym-runtime"
 
@@ -21,9 +21,9 @@ module "sym_runtime" {
 module "iam_access_flow" {
   source = "../modules/iam-access-flow"
 
-  flow_vars          = var.flow_vars
-  secrets_settings   = module.sym_runtime.secrets_settings
-  sym_environment_id = module.sym_runtime.prod_environment_id
-  iam_context_id     = module.sym_runtime.iam_context_id
-  targets            = var.iam_targets
+  flow_vars        = var.flow_vars
+  runtime_settings = module.sym_runtime.runtime_settings
+  sym_environment  = module.sym_runtime.prod_environment
+  targets          = var.iam_targets
+  tags             = var.tags
 }
