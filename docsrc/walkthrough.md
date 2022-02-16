@@ -3,7 +3,7 @@ Summary: Sym helps engineering teams automate security workflows with a sophisti
 Feedback Link: mailto:sales@symops.io
 Analytics Account: UA-156651818-3
 
-# Sym IAM Quickstart Tutorial
+# Sym AWS IAM Quickstart Tutorial
 
 ## Welcome
 Duration: 1:00
@@ -235,7 +235,7 @@ Get the names of the AWS IAM groups that you'll be starting with. Configure thes
 iam_targets = [
   {
     label    = "AWS Ops Admin",
-    group_id = "CHANGEME"
+    group_name = "CHANGEME"
   }
 ]
 ```
