@@ -1,5 +1,5 @@
 locals {
-  flow_name = "iam_access"
+  flow_name = "sym_iam_access"
 }
 
 # The Flow that grants users access to IAM targets.
@@ -70,4 +70,3 @@ resource "sym_integration" "iam_context" {
   external_id = module.iam_connector.settings.account_id
   settings    = module.iam_connector.settings
 }
-

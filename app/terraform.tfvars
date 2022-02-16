@@ -3,6 +3,8 @@ error_channel = "#sym-errors"
 
 flow_vars = {
   request_channel = "#sym-requests" # Slack Channel where requests should go
+
+  approvers = "foo@myco.com,bar@myco.com" # Optional safelist of users that can approve requests
 }
 
 # List of IAM groups a user can request access to.

@@ -4,7 +4,7 @@
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
   "updated": "2022-01-31T20:22:56-08:00",
-  "id": "sym_iam_quickstart",
+  "id": "sym_aws_iam_quickstart",
   "duration": 22,
   "title": "Sym Workflows: Infrastructure Access",
   "summary": "Sym helps engineering teams automate security workflows with a sophisticated access management platform.",
@@ -15,5 +15,5 @@
   "tags": [],
   "feedback": "mailto:sales@symops.io",
   "ga": "UA-156651818-3",
-  "url": "sym_iam_quickstart"
+  "url": "sym_aws_iam_quickstart"
 }

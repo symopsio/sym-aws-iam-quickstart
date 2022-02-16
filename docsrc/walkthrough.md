@@ -1,4 +1,4 @@
-ID: sym_iam_quickstart
+ID: sym_aws_iam_quickstart
 Summary: Sym helps engineering teams automate security workflows with a sophisticated access management platform.
 Feedback Link: mailto:sales@symops.io
 Analytics Account: UA-156651818-3
@@ -14,9 +14,9 @@ If you want to check out a demo, go [here](https://demo.symops.com/)!
 
 ### Workflow
 
-Today I want to walk you through setting up a simple access control workflow using Slack, IAM and Sym. By the end of this tutorial, you'll have the ability to wrap any resource in IAM with a fully-configurable request-and-approval flow, using a declaratively provisioned Slack bot.
+Today I want to walk you through setting up a simple access control workflow using Slack, AWS IAM and Sym. By the end of this tutorial, you'll have the ability to wrap any resource in AWS IAM with a fully-configurable request-and-approval flow, using a declaratively provisioned Slack bot.
 
-The complete code for this tutorial can be found at [`@symopsio/sym-iam-quickstart`](https://github.com/symopsio/sym-iam-quickstart).
+The complete code for this tutorial can be found at [`@symopsio/sym-aws-iam-quickstart`](https://github.com/symopsio/sym-aws-iam-quickstart).
 
 ## What will it look like?
 Duration: 1:00
@@ -31,12 +31,12 @@ This is what a request will look like.
 
 ![Request Modal](img/RequestModal.png)
 
-Sym will send a request for approval to the appropriate users or channel based on your [`impl.py`](https://github.com/symopsio/sym-iam-quickstart/blob/main/modules/iam-access-flow/impl.py).
+Sym will send a request for approval to the appropriate users or channel based on your [`impl.py`](https://github.com/symopsio/sym-aws-iam-quickstart/blob/main/modules/iam-access-flow/impl.py).
 
 
 ![Approval Request](img/ApprovalRequest.png)
 
-Finally, upon approval, Sym gives you access to the IAM group and updates Slack.
+Finally, upon approval, Sym gives you access to the AWS IAM group and updates Slack.
 
 ![Approved Access](img/ApprovedAccess.png)
 
@@ -48,7 +48,7 @@ To complete this tutorial, you should [install Terraform](https://learn.hashicor
 
 ### What's Next
 
-The [app environment](https://github.com/symopsio/sym-iam-quickstart/tree/main/app) includes everything you need to get an IAM workflow up and running. Just configure a few variables in [`terraform.tfvars`](https://github.com/symopsio/sym-iam-quickstart/tree/main/app/terraform.tfvars) and you're on your way!
+The [app environment](https://github.com/symopsio/sym-aws-iam-quickstart/tree/main/app) includes everything you need to get an AWS IAM workflow up and running. Just configure a few variables in [`terraform.tfvars`](https://github.com/symopsio/sym-aws-iam-quickstart/tree/main/app/terraform.tfvars) and you're on your way!
 
 Here's all that you'll need to do:
 
@@ -56,8 +56,7 @@ Here's all that you'll need to do:
 - Install the Sym Slack app
 - Configure your Slack channels
 - Test your deploy flow
-- Set up your IAM API token
-- Set up your IAM `Targets`
+- Set up your AWS IAM `Targets`
 - E2E test and more goodies!
 
 ## Set up the `symflow` CLI
@@ -213,43 +212,22 @@ Positive
 
 ### Try out a request!
 
-You should be able to make a request now with `/sym req`, though you'll get an error when you try to approve access, since we haven't configured IAM yet.
+You should be able to make a request now with `/sym req`, though you'll get an error when you try to approve access, since we haven't configured our AWS IAM groups yet.
 
 Check in your `errors_channel` and you should see something like this:
 
-![IAMError](img/IAMError.png)
+![IAMError](img/AWSIAMError.png)
 
-## Set up your IAM API token
+## Set up your AWS IAM `Targets`
 Duration: 3:00
 
-Sym stores your IAM API token in an AWS Secrets Manager value. By default, the `sym-runtime` module sets up a shared AWS Secrets Manager secret that you add key/value pairs to for the secrets that your `Runtime` needs to access.
+The `sym-runtime` module assumes a role that lives in your AWS account, and has the permission to assume an IAM role allowed to modify IAM groups. This is called a [role chaining](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_terms-and-concepts.html) type of trust relationship.
 
-### Create your API token
+Identify the initial AWS IAM groups that Sym will move users in and out of. You can always change and modify these groups later, so we recommend starting with an existing group or creating a temporary group for testing.
 
-Follow our [IAM setup instructions](https://docs.symops.com/docs/iam) to create an IAM API token that has access to manage your target groups.
+### Set Group names
 
-### Set your API token in Sym
-
-Configure the API key in the AWS Secrets Manager secret configured by your [`sym-runtime`](https://github.com/symopsio/sym-iam-quickstart/tree/main/modules/sym-runtime/main.tf) module like so.
-
-```bash
-$ OKTA_API_TOKEN=xxx
-$ aws secretsmanager put-secret-value \
-  --secret-id /symops.com/shared \
-  --secret-string "{\"iam_api_token\": \"$OKTA_API_TOKEN\"}"
-```
-
-Positive
-: n.b. You are free to define your secrets in separate AWS Secret Manager resources if you choose, you'll just need to update where your `Flow` grabs its secret from.
-
-## Set up your IAM `Targets`
-Duration: 3:00
-
-Identify the initial IAM groups that Sym will move users in and out of. You can always change and modify these groups later, so we recommend starting with an existing group or creating a temporary group for testing.
-
-### Set Group IDs
-
-Get the IDs of the IAM groups that you'll be starting with. Configure these in `iam_targets` in [`terraform.tfvars`](https://github.com/symopsio/sym-iam-quickstart/tree/main/app/terraform.tfvars).
+Get the names of the AWS IAM groups that you'll be starting with. Configure these in `iam_targets` in [`terraform.tfvars`](https://github.com/symopsio/sym-iam-quickstart/tree/main/app/terraform.tfvars).
 
 ```hcl
 # app/terraform.tfvars
@@ -262,20 +240,10 @@ iam_targets = [
 ]
 ```
 
-### Set IAM domain
-
-Set your [IAM domain](https://developer.iam.com/docs/guides/find-your-domain/main/) as well.
-
-```hcl
-# app/terraform.tfvars
-
-iam_org_domain = "xxx.iam.com"
-```
-
 ## E2E test and more goodies!
 Duration: 3:00
 
-Now that you've configured your IAM `Targets`, its time to reapply your Terraform configs and validate that your integration works end-to-end.
+Now that you've configured your AWS IAM `Targets`, its time to reapply your Terraform configs and validate that your integration works end-to-end.
 
 Run a `terraform apply` and then request access to your IAM target. Once complete, your request should be approved with no errors!
 
@@ -301,9 +269,9 @@ Apply complete! Resources: 0 added, 3 changed, 0 destroyed.
 Here are some next steps to consider:
 
 * Set up [reporting](https://docs.symops.com/docs/reporting-overview). Ship audit data to a flexible group of `LogDestinations`.
-* Update your `Flow` to require that users be members of a certain IAM group to approve access:
-  1. Configure `flow_vars.approver_group` with the IAM group ID in [`terraform.tfvars`](https://github.com/symopsio/sym-iam-quickstart/tree/main/app/terraform.tfvars).
-  2. Uncomment the `hook` annotation on the `on_approve` method in [`impl.py`](https://github.com/symopsio/sym-iam-quickstart/tree/main/modules/iam-access-flow/impl.py).
+* Update your `Flow` to require that users be members of a safelist to approve access.
+  1. Configure `flow_vars.approvers` with the safelist of approvers in [`terraform.tfvars`](https://github.com/symopsio/sym-lambda-quickstart/tree/main/app/terraform.tfvars).
+  2. Uncomment the `hook` annotation on the `on_approve` method in [`impl.py`](https://github.com/symopsio/sym-lambda-quickstart/tree/main/modules/lambda-access-flow/impl.py).
      This is just one example of what you can do with [hooks in the SDK!](https://docs.symops.com/docs/handlers)
 * Manage [users](https://docs.symops.com/docs/manage-users). Sym handles the "happy path" where user emails match across systems automatically. You can use the `symflow` CLI to configure user mappings when required.
 * Iterate on your `Flow` logic. Maybe change things to allow self-approval only for on-call users?
