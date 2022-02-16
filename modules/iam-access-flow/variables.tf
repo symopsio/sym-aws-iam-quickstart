@@ -3,29 +3,14 @@ variable "flow_vars" {
   type        = map(string)
 }
 
-
-variable "iam_context_id" {
-  description = "ID of the Sym runtime integration for the IAM permission context."
-  type        = string
+variable "runtime_settings" {
+  description = "Runtime connector settings"
+  type        = object({ role_arn = string })
 }
 
-
-variable "secret_json_key" {
-  description = "Name of the key that maps to the IAM API key within your Secrets Manager Secret."
-  type        = string
-  default     = "iam_api_token"
-}
-
-variable "secrets_settings" {
-  description = "Secrets source and path for shared secret lookups."
-  type = object(
-    { source_id = string, path = string }
-  )
-}
-
-variable "sym_environment_id" {
-  description = "ID of the Sym Environment for this Flow."
-  type        = string
+variable "sym_environment" {
+  description = "Sym Environment for this Flow."
+  type        = object({ id = string, name = string })
 }
 
 variable "targets" {
@@ -33,4 +18,10 @@ variable "targets" {
   type = list(object(
     { label = string, group_name = string }
   ))
+}
+
+variable "tags" {
+  description = "Additional tags to apply to resources."
+  type        = map(string)
+  default     = {}
 }

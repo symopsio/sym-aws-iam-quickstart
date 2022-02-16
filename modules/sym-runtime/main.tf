@@ -10,16 +10,6 @@ module "runtime_connector" {
   tags = var.tags
 }
 
-# Creates AWS IAM Role that a Sym runtime assumes to modify IAM Groups
-module "iam_connector" {
-  source  = "terraform.symops.com/symopsio/iam-connector/sym"
-  version = ">= 1.2.0"
-
-  environment       = var.runtime_name
-  runtime_role_arns = [module.runtime_connector.settings["role_arn"]]
-}
-
-
 # The base permissions that a workflow has access to
 resource "sym_integration" "runtime_context" {
   type = "permission_context"
@@ -27,16 +17,6 @@ resource "sym_integration" "runtime_context" {
 
   external_id = module.runtime_connector.settings.account_id
   settings    = module.runtime_connector.settings
-}
-
-# Permission context for working with AWS IAM
-resource "sym_integration" "iam_context" {
-  type = "permission_context"
-
-  name        = "iam-${var.runtime_name}"
-  label       = "IAM Permission Context"
-  settings    = module.iam_connector.settings
-  external_id = module.iam_connector.settings.account_id
 }
 
 # Declares a runtime where workflows can execute
