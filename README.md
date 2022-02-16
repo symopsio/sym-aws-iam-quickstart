@@ -1,6 +1,6 @@
 # Sym AWS IAM Quickstart
 
-A starter template to get an IAM access workflow set up for your team.
+A starter template to get an AWS IAM access workflow set up for your team.
 
 ## Tutorial
 
