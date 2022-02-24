@@ -1,5 +1,5 @@
 locals {
-  flow_name = "sym_iam_access"
+  flow_name = "iam_access"
 }
 
 # The Flow that grants users access to IAM targets.
