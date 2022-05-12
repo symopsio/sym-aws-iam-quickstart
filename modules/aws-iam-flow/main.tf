@@ -1,11 +1,7 @@
-locals {
-  flow_name = "iam_access"
-}
-
 # The Flow that grants users access to IAM targets.
 resource "sym_flow" "this" {
   name  = local.flow_name
-  label = "IAM Access"
+  label = local.flow_label
 
   template = "sym:template:approval:1.0.0"
 
@@ -60,6 +56,8 @@ module "iam_connector" {
 
   environment       = local.flow_name
   runtime_role_arns = [var.runtime_settings.role_arn]
+
+  group_config = var.group_patterns
 }
 
 # The Integration your Strategy uses to manage IAM Groups
@@ -69,4 +67,12 @@ resource "sym_integration" "iam_context" {
 
   external_id = module.iam_connector.settings.account_id
   settings    = module.iam_connector.settings
+}
+
+locals {
+  flow_suffix  = var.sym_environment.name == "prod" ? "" : "_${var.sym_environment.name}"
+  label_suffix = var.sym_environment.name == "prod" ? "" : " [${var.sym_environment.name}]"
+
+  flow_name  = "aws${local.flow_suffix}"
+  flow_label = "AWS${local.label_suffix}"
 }

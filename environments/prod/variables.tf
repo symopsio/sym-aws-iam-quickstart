@@ -10,17 +10,31 @@ variable "error_channel" {
   default     = "#sym-errors"
 }
 
+variable "example_target_enabled" {
+  description = "Whether to create an example IAM target group and role"
+  type        = bool
+  default     = false
+}
+
 variable "flow_vars" {
   description = "Configuration values for the Flow implementation Python"
   type        = map(string)
   default     = {}
 }
 
+variable "iam_group_patterns" {
+  description = "The patterns of IAM group names that this flow can modify. Both the path and name can contain wildcards."
+  type = list(object(
+    { path = string, name = string }
+  ))
+}
+
 variable "iam_targets" {
-  description = "List of IAM group targets that end-users can request access to. Each object has a label and a group_name."
+  description = "List of IAM group targets that end-users can request access to. Each object has a label and a group_name. Must either enable the example target or supply a listing here."
   type = list(object(
     { label = string, group_name = string }
   ))
+  default = []
 }
 
 variable "runtime_name" {
