@@ -20,12 +20,16 @@ iam_group_patterns = [
 
 # List of IAM groups a user can request access to.
 # Each item has a label and group name.
-#iam_targets = [
-#  {
-#    label      = "AWS Ops Admin",
-#    group_name = "CHANGEME" # IAM Group name
-#  }
-#]
+# Use example_target_enabled to create test target group,
+# which will automatically get added to the target list.
+# You can also use the aws-iam-target module to create your
+# own custom groups.
+iam_targets = [
+  {
+    label      = "AWS Ops Admin",
+    group_name = "CHANGEME" # IAM Group name
+  }
+]
 
 # Slack Workspace where Sym is installed
 slack_workspace_id = "CHANGEME"
