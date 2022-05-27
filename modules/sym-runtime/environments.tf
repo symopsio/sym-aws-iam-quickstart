@@ -7,9 +7,10 @@ resource "sym_error_logger" "slack" {
 # A sym environment collects together a group of integrations to simplify
 # Flow configuration.
 resource "sym_environment" "this" {
-  name            = var.runtime_name
-  runtime_id      = sym_runtime.this.id
-  error_logger_id = sym_error_logger.slack.id
+  name                = var.runtime_name
+  runtime_id          = sym_runtime.this.id
+  error_logger_id     = sym_error_logger.slack.id
+  log_destination_ids = [sym_log_destination.datadog.id]
 
   integrations = {
     slack_id = sym_integration.slack.id

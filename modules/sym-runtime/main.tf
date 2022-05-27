@@ -3,7 +3,7 @@ module "runtime_connector" {
   source  = "terraform.symops.com/symopsio/runtime-connector/sym"
   version = ">= 1.1.0"
 
-  addons          = ["aws/secretsmgr"]
+  addons          = ["aws/secretsmgr", "aws/kinesis-firehose"]
   environment     = var.runtime_name
   sym_account_ids = var.sym_account_ids
 
