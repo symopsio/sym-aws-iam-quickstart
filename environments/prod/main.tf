@@ -19,7 +19,7 @@ module "terraform_state_backend" {
   name       = "tfstate"
   attributes = [data.aws_caller_identity.current.account_id]
 
-  terraform_backend_config_file_path = ""
+  terraform_backend_config_file_path = "."
   terraform_backend_config_file_name = "backend.tf"
 
   terraform_state_file = "prod/terraform.tfstate"
